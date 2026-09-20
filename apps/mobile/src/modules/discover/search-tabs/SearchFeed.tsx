@@ -12,6 +12,8 @@ import { useDataSkeleton } from "./hooks"
 import { resolveSearchFeedItems } from "./search-feed-items"
 import { SearchFeedCard } from "./SearchFeedCard"
 
+import { CustomSiteDetectorCard } from "../custom-site-detector-card"
+
 export const SearchFeed = () => {
   const { t } = useTranslation("common")
   const { searchValueAtom } = useSearchPageContext()
@@ -27,8 +29,6 @@ export const SearchFeed = () => {
   const discoveredItems = data?.data ?? []
   const items = resolveSearchFeedItems(discoveredItems, searchValue)
   const skeleton = useDataSkeleton(isLoading, data === undefined ? undefined : items.length)
-  if (skeleton) return skeleton
-  if (data === undefined) return null
 
   const resultCount = items.length
   const resultLabel =
@@ -42,15 +42,23 @@ export const SearchFeed = () => {
         width: windowWidth,
       }}
     >
-      <Text className="px-6 pt-4 text-text/60">{resultLabel}</Text>
-      <View>
-        {items.map((item, index) => (
-          <View key={item.feed?.id ?? item.feed?.url ?? `feed-${index}`}>
-            <SearchFeedCard item={item} />
-            <ItemSeparator />
+      <CustomSiteDetectorCard keyword={searchValue} />
+
+      {skeleton ? (
+        skeleton
+      ) : data !== undefined ? (
+        <>
+          <Text className="px-6 pt-4 text-text/60">{resultLabel}</Text>
+          <View>
+            {items.map((item, index) => (
+              <View key={item.feed?.id ?? item.feed?.url ?? `feed-${index}`}>
+                <SearchFeedCard item={item} />
+                <ItemSeparator />
+              </View>
+            ))}
           </View>
-        ))}
-      </View>
+        </>
+      ) : null}
     </View>
   )
 }

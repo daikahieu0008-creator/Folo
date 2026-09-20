@@ -11,11 +11,13 @@ import {
 import { subscriptionSyncService } from "@follow/store/subscription/store"
 import type { FlashListRef } from "@shopify/flash-list"
 import type { ParseKeys } from "i18next"
+import { useAtomValue } from "jotai"
 import { memo, useCallback, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { View } from "react-native"
 import { useEventCallback } from "usehooks-ts"
 
+import { customSitesAtom } from "@/src/atoms/custom-sites"
 import { useGeneralSettingKey, useHideAllReadSubscriptions } from "@/src/atoms/settings/general"
 import { useRegisterNavigationScrollView } from "@/src/components/layouts/tabbar/hooks"
 import {
@@ -38,6 +40,7 @@ import { FeedScreen } from "@/src/screens/(stack)/feeds/[feedId]/FeedScreen"
 
 import { useFeedListSortMethod, useFeedListSortOrder } from "./atoms"
 import { CategoryGrouped } from "./CategoryGrouped"
+import { CustomSiteItem } from "./items/CustomSiteItem"
 import { InboxItem } from "./items/InboxItem"
 import { ListSubscriptionItem } from "./items/ListSubscriptionItem"
 import { SubscriptionItem } from "./items/SubscriptionItem"
@@ -134,6 +137,7 @@ const SubscriptionListImpl = ({
     <TimelineSelectorList
       contentContainerClassName="pb-6"
       ref={scrollViewRef}
+      ListHeaderComponent={CustomSitesListSection}
       onRefresh={() => {
         setRefreshing(true)
         onRefresh().finally(() => {
@@ -146,6 +150,29 @@ const SubscriptionListImpl = ({
       keyExtractor={keyExtractor}
       extraData={extraData}
     />
+  )
+}
+
+const CustomSitesListSection = () => {
+  const customSites = useAtomValue(customSitesAtom)
+  if (!customSites || customSites.length === 0) return null
+
+  return (
+    <View className="mt-3 mb-2 px-4">
+      <Text className="mb-2 px-1 text-[13px] font-semibold text-secondary-label uppercase">
+        Trang web đã theo dõi ({customSites.length})
+      </Text>
+      <View className="overflow-hidden rounded-2xl border border-opaque-separator/50 bg-secondary-system-background">
+        {customSites.map((site, index) => (
+          <CustomSiteItem
+            key={site.id}
+            site={site}
+            isFirst={index === 0}
+            isLast={index === customSites.length - 1}
+          />
+        ))}
+      </View>
+    </View>
   )
 }
 const ItemRender = ({
