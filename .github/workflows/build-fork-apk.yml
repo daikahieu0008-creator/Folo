@@ -2,15 +2,6 @@ name: 🚀 Build Folo Android APK (Fork)
 
 on:
   workflow_dispatch:
-    inputs:
-      build_type:
-        description: "Loại APK cần build"
-        required: true
-        default: "debug"
-        type: choice
-        options:
-          - debug
-          - release
   push:
     branches:
       - dev
@@ -25,7 +16,7 @@ concurrency:
 
 jobs:
   build-apk:
-    name: 📱 Build Android APK
+    name: 📱 Build Standalone Android APK
     runs-on: ubuntu-latest
 
     steps:
@@ -59,10 +50,17 @@ jobs:
           java-version: "17"
           distribution: "zulu"
 
+      - name: 🐘 Cấu hình Gradle Cache
+        uses: gradle/actions/setup-gradle@v3
+
       - name: 🤖 Cài đặt Android SDK
         uses: android-actions/setup-android@v3
         with:
           packages: platform-tools
+
+      - name: 🔧 Tối ưu cấu hình Standalone (Tắt Dev Client để vào thẳng app)
+        run: |
+          node -e "const p = require('./apps/mobile/package.json'); delete p.dependencies['expo-dev-client']; require('fs').writeFileSync('./apps/mobile/package.json', JSON.stringify(p, null, 2));"
 
       - name: 📥 Cài đặt dependencies
         run: pnpm install --no-frozen-lockfile --child-concurrency=1
@@ -74,23 +72,21 @@ jobs:
         working-directory: apps/mobile
         run: |
           npx expo prebuild --platform android --clean --no-install
+          # Cấu hình chữ ký debug cho bản release để cài đặt tự do không lỗi
+          sed -i 's/signingConfig signingConfigs.release/signingConfig signingConfigs.debug/g' android/app/build.gradle
+          sed -i 's/minifyEnabled enableProguardInReleaseBuilds/minifyEnabled false/g' android/app/build.gradle
         env:
           EXPO_NO_TELEMETRY: "1"
 
-      - name: 🔨 Biên dịch Android APK (Gradle)
+      - name: 🔨 Biên dịch Standalone Android APK (Gradle)
         working-directory: apps/mobile/android
         run: |
           chmod +x gradlew
-          build_type="${{ github.event.inputs.build_type || 'debug' }}"
-          if [ "$build_type" = "release" ]; then
-            ./gradlew assembleRelease --no-daemon --stacktrace
-          else
-            ./gradlew assembleDebug --no-daemon --stacktrace
-          fi
+          ./gradlew assembleRelease --no-daemon --stacktrace
 
       - name: 📤 Xuất bản file APK lên GitHub Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: folo-custom-site-gemini-apk
-          path: apps/mobile/android/app/build/outputs/apk/**/*.apk
+          name: folo-standalone-app-apk
+          path: apps/mobile/android/app/build/outputs/apk/release/*.apk
           retention-days: 30
