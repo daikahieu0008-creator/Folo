@@ -231,3 +231,5 @@ export const SiteCategoriesScreen: FC<{
     </View>
   )
 }
+
+SiteCategoriesScreen.displayName = "SiteCategoriesScreen"

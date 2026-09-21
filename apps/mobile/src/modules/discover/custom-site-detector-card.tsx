@@ -183,3 +183,5 @@ export const CustomSiteDetectorCard: FC<{
     </View>
   )
 }
+
+CustomSiteDetectorCard.displayName = "CustomSiteDetectorCard"

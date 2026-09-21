@@ -388,3 +388,5 @@ export const CategoryPostsScreen: FC<{
     </View>
   )
 }
+
+CategoryPostsScreen.displayName = "CategoryPostsScreen"

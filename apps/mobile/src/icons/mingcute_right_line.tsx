@@ -21,3 +21,5 @@ export function MingcuteRightLine({
     </Svg>
   )
 }
+
+export const MingcuteRightLineIcon = MingcuteRightLine

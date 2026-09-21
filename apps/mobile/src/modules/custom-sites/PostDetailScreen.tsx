@@ -342,3 +342,5 @@ export const PostDetailScreen: FC<{
     </View>
   )
 }
+
+PostDetailScreen.displayName = "PostDetailScreen"

@@ -143,3 +143,5 @@ export const SitePromptSettingsScreen: FC<{
     </View>
   )
 }
+
+SitePromptSettingsScreen.displayName = "SitePromptSettingsScreen"

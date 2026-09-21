@@ -65,3 +65,5 @@ export const CustomSiteItem: FC<{
     </Pressable>
   )
 }
+
+CustomSiteItem.displayName = "CustomSiteItem"
