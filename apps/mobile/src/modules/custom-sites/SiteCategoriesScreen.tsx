@@ -42,7 +42,10 @@ export const SiteCategoriesScreen: FC<{
   const [loading, setLoading] = useState(siteCategories.length === 0)
 
   useEffect(() => {
-    if (siteCategories.length > 0) return
+    if (siteCategories.length > 0) {
+      setLoading(false)
+      return
+    }
 
     let isMounted = true
     setLoading(true)
@@ -181,7 +184,7 @@ export const SiteCategoriesScreen: FC<{
           Danh mục bài viết
         </Text>
 
-        {loading ? (
+        {loading && siteCategories.length === 0 ? (
           <View className="my-10 items-center justify-center">
             <ActivityIndicator color={primaryColor} size="large" />
             <Text className="mt-3 text-[14px] text-secondary-label">

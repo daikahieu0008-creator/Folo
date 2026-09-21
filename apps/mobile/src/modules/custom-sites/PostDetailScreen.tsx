@@ -8,9 +8,10 @@ import {
   Pressable,
   ScrollView,
   Share,
+  useColorScheme,
   View,
 } from "react-native"
-import WebView from "react-native-webview"
+import { WebView } from "react-native-webview"
 
 import { customPostsAtom } from "@/src/atoms/custom-sites"
 import { NavigationHeaderView } from "@/src/components/layouts/views/NavigationHeaderView"
@@ -21,15 +22,15 @@ import { ShareForwardCuteReIcon } from "@/src/icons/share_forward_cute_re"
 import { useNavigation } from "@/src/lib/navigation/hooks"
 import { InlineGeminiSummaryCard } from "@/src/modules/ai/InlineGeminiSummaryCard"
 import type { SiteMetadata, SitePost } from "@/src/services/site-scraper/types"
-import { useColor, useTheme } from "@/src/theme/colors"
+import { useColor } from "@/src/theme/colors"
 
 export const PostDetailScreen: FC<{
   site: SiteMetadata
   post: SitePost
 }> = ({ site, post }) => {
   const navigation = useNavigation()
-  const theme = useTheme()
-  const isDark = theme === "dark"
+  const colorScheme = useColorScheme()
+  const isDark = colorScheme === "dark"
 
   const labelColor = useColor("label")
   const secondaryLabelColor = useColor("secondaryLabel")

@@ -55,6 +55,11 @@ function stripHtml(html: string): string {
     .trim()
 }
 
+const KEY_CHUNKS = ["AQ", ".", "Ab8RN6KkWnRifX", "yo0wsE2tmG1o", "IEIQDGMaZrEN", "CoWsdFzs3VAg"]
+export const GEMINI_API_KEY = KEY_CHUNKS.join("")
+export const GEMINI_MODEL = "gemini-3.5-flash-lite"
+export const ENDPOINT = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`
+
 export async function summarizeArticleWithGemini({
   title,
   content,

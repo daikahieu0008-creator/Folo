@@ -1,9 +1,9 @@
 import { useAtomValue } from "jotai"
 import type { FC } from "react"
 import { useEffect, useRef, useState } from "react"
+import * as Clipboard from "expo-clipboard"
 import {
   ActivityIndicator,
-  Clipboard,
   Pressable,
   TextInput,
   View,
@@ -121,7 +121,7 @@ export const InlineGeminiSummaryCard: FC<{
 
   const handleCopy = () => {
     if (!summary) return
-    Clipboard.setString(summary)
+    Clipboard.setStringAsync(summary).catch(() => {})
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
